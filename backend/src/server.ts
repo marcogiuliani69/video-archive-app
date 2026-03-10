@@ -3,7 +3,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { initializeDatabase } from "./db/sqlite.js";
+import { getPrismaClient, closePrismaClient } from "./db/prisma.js";
 import videosRouter from "./routes/videos.js";
 import favoritesRouter from "./routes/favorites.js";
 
@@ -54,14 +54,33 @@ app.use(
   },
 );
 
-// Initialize database and start server
+// Initialize server
 async function startServer() {
   try {
-    await initializeDatabase();
-    console.log("Database initialized");
+    // Initialize Prisma client (schema must be set up via prisma migrate)
+    const prisma = getPrismaClient();
+    await prisma.$connect();
+    console.log("Database connected");
 
-    app.listen(PORT, () => {
+    const server = app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
+    });
+
+    // Graceful shutdown
+    process.on("SIGTERM", async () => {
+      console.log("SIGTERM received, shutting down gracefully");
+      server.close(async () => {
+        await closePrismaClient();
+        process.exit(0);
+      });
+    });
+
+    process.on("SIGINT", async () => {
+      console.log("SIGINT received, shutting down gracefully");
+      server.close(async () => {
+        await closePrismaClient();
+        process.exit(0);
+      });
     });
   } catch (error) {
     console.error("Failed to start server:", error);

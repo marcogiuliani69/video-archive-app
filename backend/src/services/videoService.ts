@@ -8,7 +8,7 @@ import {
   parseVideoTimestamp,
 } from "../utils/parseVideoTimestamp";
 import { validateVideoPath } from "../utils/pathValidator";
-import { getDatabase } from "../db/sqlite";
+import * as favoriteService from "./favoriteService";
 
 const BASE_PATH = process.env.VIDEO_BASE_PATH || "/data/videos";
 const SUPPORTED_FORMATS = [".mp4", ".webm", ".mkv", ".avi"];
@@ -33,17 +33,7 @@ async function listVideoFiles(): Promise<string[]> {
  * Check if a video is marked as favorite
  */
 async function isVideoFavorite(videoPath: string): Promise<boolean> {
-  try {
-    const db = await getDatabase();
-    const result = await db.get(
-      "SELECT id FROM favorites WHERE video_path = ?",
-      videoPath,
-    );
-    return !!result;
-  } catch (error) {
-    console.error("Error checking favorite status:", error);
-    return false;
-  }
+  return await favoriteService.isFavorite(videoPath);
 }
 
 /**
