@@ -233,7 +233,7 @@ FavoritesPage
 
 PORT=3000
 VIDEO_BASE_PATH=/data/videos
-SQLITE_DB_PATH=./data/app.db
+DATABASE_URL="file:./data/videos.db"
 
 ---
 
