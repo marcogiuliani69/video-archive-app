@@ -40,7 +40,7 @@ export class FavoriteRepository {
 
   async getByPath(videoPath: string): Promise<Favorite | null> {
     const prisma = getPrismaClient();
-    const favorite = await prisma.favorite.findUnique({
+    const favorite = await prisma.favorite.findFirst({
       where: { videoPath },
     });
 
@@ -90,7 +90,7 @@ export class FavoriteRepository {
 
   async exists(videoPath: string): Promise<boolean> {
     const prisma = getPrismaClient();
-    const favorite = await prisma.favorite.findUnique({
+    const favorite = await prisma.favorite.findFirst({
       where: { videoPath },
     });
 

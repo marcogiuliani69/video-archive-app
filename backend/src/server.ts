@@ -1,14 +1,13 @@
-// Backend Entry Point
+// Deve essere PRIMO - prima di tutto il resto
+import "./env.js";
 
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import { getPrismaClient, closePrismaClient } from "./db/prisma.js";
 import videosRouter from "./routes/videos.js";
 import favoritesRouter from "./routes/favorites.js";
 
-dotenv.config();
-
+// Rimuovi l'import di dotenv e dotenv.config() che erano qui
 const app = express();
 const PORT = process.env.PORT || 3000;
 
